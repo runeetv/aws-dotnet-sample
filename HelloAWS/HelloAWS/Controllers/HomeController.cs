@@ -13,6 +13,7 @@ namespace HelloAWS.Controllers
         {
             ViewBag.LocalServer = System.Environment.MachineName;
             ViewBag.SQLServer = GetSQLServerName();
+            ViewBag.SQLNode = GetSQLServerName();
             return View();
         }
 
@@ -23,6 +24,21 @@ namespace HelloAWS.Controllers
 
             SqlCommand cmd = conn.CreateCommand();
             cmd.CommandText = "select @@SERVERNAME";
+            cmd.Connection = conn;
+            conn.Open();
+            var result = cmd.ExecuteScalar();
+            conn.Close();
+            return result.ToString();
+        }
+
+
+        private string GetSQLServerNode()
+        {
+            var connString = System.Configuration.ConfigurationManager.ConnectionStrings["SQlConnection"].ConnectionString;
+            var conn = new SqlConnection(connString);
+
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT NodeName FROM sys.dm_os_cluster_nodes where is_current_owner = 1";
             cmd.Connection = conn;
             conn.Open();
             var result = cmd.ExecuteScalar();
