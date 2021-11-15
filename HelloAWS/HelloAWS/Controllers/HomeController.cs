@@ -14,6 +14,7 @@ namespace HelloAWS.Controllers
             ViewBag.LocalServer = System.Environment.MachineName;
             ViewBag.SQLServer = GetSQLServerName();
             ViewBag.SQLNode = GetSQLServerNode();
+            ViewBag.AZName = GetAZName();
             return View();
         }
 
@@ -43,13 +44,23 @@ namespace HelloAWS.Controllers
             conn.Open();
             var result = cmd.ExecuteScalar();
             conn.Close();
-            if( result.ToString() == null)
+            
+            if( result == null)
             {
-                return "";
+                return "<SQLNodeNotFound>";
             }
             return result.ToString();
         }
 
+        private string GetAZName()
+        {
+            // Read the file as one string.
+            string azName = System.IO.File.ReadAllText(@"C:\\Temp\\AZ.txt");
+            if (string.IsNullOrEmpty(azName))
+                return "<AZNameNotFound>";            
+
+            return azName;
+        }
 
         public ActionResult About()
         {
