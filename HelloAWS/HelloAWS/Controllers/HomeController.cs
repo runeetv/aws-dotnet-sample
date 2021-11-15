@@ -13,7 +13,7 @@ namespace HelloAWS.Controllers
         {
             ViewBag.LocalServer = System.Environment.MachineName;
             ViewBag.SQLServer = GetSQLServerName();
-            ViewBag.SQLNode = GetSQLServerName();
+            ViewBag.SQLNode = GetSQLServerNode();
             return View();
         }
 
@@ -43,6 +43,10 @@ namespace HelloAWS.Controllers
             conn.Open();
             var result = cmd.ExecuteScalar();
             conn.Close();
+            if( result.ToString() == null)
+            {
+                return "";
+            }
             return result.ToString();
         }
 
